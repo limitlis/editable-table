@@ -13,7 +13,7 @@ $.fn.editableTableWidget = function (options) {
 			editor = activeOptions.editor.css('position', 'absolute').hide().appendTo(element.parent()),
 			active,
 			showEditor = function (select) {
-				active = element.find('td:focus');
+				active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
 				if (active.length) {
 					editor.val(active.text())
 						.removeClass('error')
@@ -26,6 +26,11 @@ $.fn.editableTableWidget = function (options) {
 					if (select) {
 						editor.select();
 					}
+				} else {
+					// Propogate click down to first child of td
+					element.find('td:focus').children().click();
+					// TODO: allow for different types of interactions
+					// Like focus on a select component and refocus TD on blur...
 				}
 			},
 			setActiveText = function () {
@@ -124,8 +129,9 @@ $.fn.editableTableWidget = function (options) {
 };
 $.fn.editableTableWidget.defaultOptions = {
 	cloneProperties: ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
-					  'text-align', 'font', 'font-size', 'font-family', 'font-weight',
-					  'border', 'border-top', 'border-bottom', 'border-left', 'border-right'],
+					'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+					'border', 'border-top', 'border-bottom', 'border-left', 'border-right'],
+	skipClass: '.noedit',
 	editor: $('<input>')
 };
 
