@@ -28,7 +28,7 @@ $.fn.editableTableWidget = function (options) {
 					}
 				} else {
 					// Propogate click down to first child of td
-					element.find('td:focus').children().click();
+					element.find('td:focus').children('input').click();
 					// TODO: allow for different types of interactions
 					// Like focus on a select component and refocus TD on blur...
 				}
