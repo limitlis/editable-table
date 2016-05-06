@@ -149,7 +149,7 @@ $.fn.editableTableWidget = function (options) {
 
 		element.find('td').prop('tabindex', 1);
 		$(window).on('resize', function () {
-			if (editor.is(':visible')) {
+			if (editor && editor.is(':visible')) {
 				editor.offset(active.offset())
 				.width(active.width())
 				.height(active.height());
