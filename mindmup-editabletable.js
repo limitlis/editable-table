@@ -68,7 +68,8 @@ $.fn.editableTableWidget = function (options) {
 							.focus();
 						bindEvents();
 
-					} else if (active.data('type-options')) {
+					} else if (active.data('type-options') && active.data('type-options').join() !== '0,1') {
+						// Do as a checkbox if enumoptions are 0/1
 						editorSelect.children('option').remove();
 
 						// Create options based on data-select-options
@@ -93,10 +94,11 @@ $.fn.editableTableWidget = function (options) {
 						}
 					}
 				} else {
-					// Propogate click down to first child of td
-					element.find('td:focus').children('input').click();
-					// TODO: allow for different types of interactions
-					// Like focus on a select component and refocus TD on blur...
+
+					var isChecked = element.find('td:focus').find('input[type="checkbox"]').prop('checked');
+					element.find('td:focus').find('input[type="checkbox"]').prop('checked', !isChecked);
+					element.find('td:focus').trigger('change', '' + (+!isChecked));
+
 				}
 			},
 			setActiveText = function () {
