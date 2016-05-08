@@ -58,7 +58,7 @@ $.fn.editableTableWidget = function (options) {
 				active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
 				if (active.length) {
 					if (!active.data('type-options')) {
-						editor = editorText.val(active.text())
+						editor = editorText.val(active.find('.inner-value').text())
 							.removeClass('error')
 							.show()
 							.offset(active.offset())
@@ -82,12 +82,12 @@ $.fn.editableTableWidget = function (options) {
 								}
 								editorSelect.append($('<option value="' + tempOptions[i] + '" ' + (selected ? 'selected' : '') +'>' + tempOptions[i] + '</option>'));
 							}
-							editor = editorSelect.val(active.text())
+							editor = editorSelect.val(active.find('.inner-value').text())
 								.removeClass('error')
 								.show()
 								.offset(active.offset())
 								.css(active.css(activeOptions.cloneProperties))
-								.width(active.width())
+								.width(active.outerWidth())
 								.height(active.outerHeight())
 								.focus();
 							bindEvents();
