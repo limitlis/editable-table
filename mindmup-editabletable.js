@@ -54,7 +54,7 @@ $.fn.editableTableWidget = function (options) {
 			editorText = activeOptions.editorText.css('position', 'absolute').hide().appendTo(element.parent()),
 			editorSelect = activeOptions.editorSelect.css('position', 'absolute').hide().appendTo(element.parent()),
 			active,
-			showEditor = function (select) {
+			showEditor = function () {
 				active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
 				if (active.length) {
 					if (!active.data('type-options')) {
@@ -92,13 +92,23 @@ $.fn.editableTableWidget = function (options) {
 								.focus();
 							bindEvents();
 						}
+					} else {
+						if (element.find('td:focus').data('type-options') && element.find('td:focus').data('type-options').join() === '0,1') {
+
+							var isChecked = element.find('td:focus').find('input[type="checkbox"]').prop('checked');
+							element.find('td:focus').find('input[type="checkbox"]').prop('checked', !isChecked);
+							element.find('td:focus').trigger('change', '' + (+!isChecked));
+						}
 					}
 				} else {
-
-					var isChecked = element.find('td:focus').find('input[type="checkbox"]').prop('checked');
-					element.find('td:focus').find('input[type="checkbox"]').prop('checked', !isChecked);
-					element.find('td:focus').trigger('change', '' + (+!isChecked));
-
+					if (element.find('td:focus').hasClass('select2')) {
+						$('.return-focus').removeClass('return-focus');
+						var tempEl = element.find('td:focus');
+						// Add class so that we can find element later
+						tempEl.addClass('return-focus');
+						$(':focus').blur();
+						tempEl.click();
+					}
 				}
 			},
 			setActiveText = function () {
