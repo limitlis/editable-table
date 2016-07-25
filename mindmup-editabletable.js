@@ -54,7 +54,13 @@ $.fn.editableTableWidget = function (options) {
 			editorText = activeOptions.editorText.css('position', 'absolute').hide().appendTo(element.parent()),
 			editorSelect = activeOptions.editorSelect.css('position', 'absolute').hide().appendTo(element.parent()),
 			active,
-			showEditor = function () {
+			showEditor = function (e) {
+				// checked for a 'locked-row' class on the TR to block this row for editing
+				var locked = $(e.target.parentElement).hasClass('locked-row') || $(e.target.parentElement.parentElement).hasClass('locked-row');
+				if(locked) {
+					return;
+				}
+
 				active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
 				if (active.length) {
 					if (!active.data('type-options')) {
