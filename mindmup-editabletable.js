@@ -54,7 +54,12 @@ $.fn.editableTableWidget = function (options) {
 			editorText = activeOptions.editorText.css('position', 'absolute').hide().appendTo(element.parent()),
 			editorSelect = activeOptions.editorSelect.css('position', 'absolute').hide().appendTo(element.parent()),
 			active,
-			showEditor = function () {
+			showEditor = function (e) {
+				// checked for a 'locked-row' class on the TR to block this row for editing
+				if($(e.target).closest('.locked-row').length) {
+					return;
+				}
+
 				active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
 				if (active.length) {
 					if (!active.data('type-options')) {
@@ -144,9 +149,15 @@ $.fn.editableTableWidget = function (options) {
 			if (possibleMove.length > 0) {
 				possibleMove.focus();
 			} else if (e.which === ENTER) {
-				showEditor(false);
+				if($(e.target).closest('.locked-row').length) {
+					return;
+				}
+				showEditor();
 			} else if (e.which === 17 || e.which === 91 || e.which === 93) {
-				showEditor(true);
+				if($(e.target).closest('.locked-row').length) {
+					return;
+				}
+				showEditor();
 				prevent = false;
 			} else {
 				prevent = false;
