@@ -56,8 +56,7 @@ $.fn.editableTableWidget = function (options) {
 			active,
 			showEditor = function (e) {
 				// checked for a 'locked-row' class on the TR to block this row for editing
-				var locked = $(e.target.parentElement).hasClass('locked-row') || $(e.target.parentElement.parentElement).hasClass('locked-row');
-				if(locked) {
+				if($(e.target).closest('.locked-row').length) {
 					return;
 				}
 
@@ -150,9 +149,15 @@ $.fn.editableTableWidget = function (options) {
 			if (possibleMove.length > 0) {
 				possibleMove.focus();
 			} else if (e.which === ENTER) {
-				showEditor(false);
+				if($(e.target).closest('.locked-row').length) {
+					return;
+				}
+				showEditor();
 			} else if (e.which === 17 || e.which === 91 || e.which === 93) {
-				showEditor(true);
+				if($(e.target).closest('.locked-row').length) {
+					return;
+				}
+				showEditor();
 				prevent = false;
 			} else {
 				prevent = false;
