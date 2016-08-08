@@ -63,7 +63,7 @@ $.fn.editableTableWidget = function (options) {
 				active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
 				if (active.length) {
 					if (!active.data('type-options')) {
-						editor = editorText.val(active.find('.inner-value').text())
+						editor = editorText.val(active.text().trim() || active.find('.inner-value').text())
 							.removeClass('error')
 							.show()
 							.offset(active.offset())
@@ -120,13 +120,17 @@ $.fn.editableTableWidget = function (options) {
 				var text = editor.val(),
 					evt = $.Event('change'),
 					originalContent;
-				if (active.text() === text || editor.hasClass('error')) {
+				if (active.text().trim() === text || editor.hasClass('error')) {
 					return true;
 				}
 				originalContent = active.html();
 				active.text(text).trigger(evt, text);
-				if (evt.result === false) {
-					active.html(originalContent);
+				if (evt.result === 'willSave') {
+					if (active.find('.inner-value').length) {
+						active.find('.inner-value').html(originalContent);
+					} else {
+						active.html(originalContent);
+					}
 				}
 			},
 			movement = function (element, keycode) {
