@@ -127,9 +127,9 @@ $.fn.editableTableWidget = function (options) {
 				active.text(text).trigger(evt, text);
 				if (evt.result === 'willSave') {
 					if (active.find('.inner-value').length) {
-						active.find('.inner-value').html(originalContent);
+						active.find('.inner-value').html(text);
 					} else {
-						active.html(originalContent);
+						active.html(text);
 					}
 				}
 			},
