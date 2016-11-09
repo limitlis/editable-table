@@ -73,12 +73,12 @@ $.fn.editableTableWidget = function (options) {
 							.focus();
 						bindEvents();
 
-					} else if (active.data('type-options') && active.data('type-options').join() !== '0,1') {
+					} else if (active.data('type-options') && active.data('type-options') !== '0,1') {
 						// Do as a checkbox if enumoptions are 0/1
 						editorSelect.children('option').remove();
 
 						// Create options based on data-select-options
-						var tempOptions = active.data('type-options'),
+						var tempOptions = active.data('type-options').split(','),
 							selected = false;
 						if (tempOptions.length) {
 							for(var i = 0; i < tempOptions.length; i++) {
@@ -87,7 +87,7 @@ $.fn.editableTableWidget = function (options) {
 								}
 								editorSelect.append($('<option value="' + tempOptions[i] + '" ' + (selected ? 'selected' : '') +'>' + tempOptions[i] + '</option>'));
 							}
-							editor = editorSelect.val(active.find('.inner-value').text())
+							editor = editorSelect.val(active.find('.inner-value').text() || active.text())
 								.removeClass('error')
 								.show()
 								.offset(active.offset())
@@ -98,7 +98,7 @@ $.fn.editableTableWidget = function (options) {
 							bindEvents();
 						}
 					} else {
-						if (element.find('td:focus').data('type-options') && element.find('td:focus').data('type-options').join() === '0,1') {
+						if (element.find('td:focus').data('type-options') && element.find('td:focus').data('type-options') === '0,1') {
 
 							var isChecked = element.find('td:focus').find('input[type="checkbox"]').prop('checked');
 							element.find('td:focus').find('input[type="checkbox"]').prop('checked', !isChecked);
