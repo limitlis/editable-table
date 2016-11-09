@@ -135,9 +135,9 @@ $.fn.editableTableWidget = function (options) {
 			},
 			movement = function (element, keycode) {
 				if (keycode === ARROW_RIGHT) {
-					return element.next('td');
+					return element.nextAll('td:not(.hidden)').first();
 				} else if (keycode === ARROW_LEFT) {
-					return element.prev('td');
+					return element.prevAll('td:not(.hidden)').first();
 				} else if (keycode === ARROW_UP) {
 					return element.parent().prev().children().eq(element.index());
 				} else if (keycode === ARROW_DOWN) {
