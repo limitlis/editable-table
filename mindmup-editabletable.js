@@ -56,7 +56,7 @@ $.fn.editableTableWidget = function (options) {
 			active,
 			showEditor = function (e) {
 				// checked for a 'locked-row' class on the TR to block this row for editing
-				if($(e.target).closest('.locked-row').length) {
+				if(e && $(e.target).closest('.locked-row').length) {
 					return;
 				}
 
@@ -106,7 +106,7 @@ $.fn.editableTableWidget = function (options) {
 						}
 					}
 				} else {
-					if (element.find('td:focus').hasClass('select2')) {
+					if (element.find('td:focus').hasClass('select2')) {`
 						$('.return-focus').removeClass('return-focus');
 						var tempEl = element.find('td:focus');
 						// Add class so that we can find element later
