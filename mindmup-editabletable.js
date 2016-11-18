@@ -62,7 +62,7 @@ $.fn.editableTableWidget = function (options) {
 
 				active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
 				if (active.length) {
-					if (!active.data('type-options')) {
+					if (!active.data('type-options') && active.data('type') !== 'boolean') {
 						editor = editorText.val(active.text().trim() || active.find('.inner-value').text())
 							.removeClass('error')
 							.show()
@@ -98,7 +98,7 @@ $.fn.editableTableWidget = function (options) {
 							bindEvents();
 						}
 					} else {
-						if (element.find('td:focus').data('type-options') && element.find('td:focus').data('type-options') === '0,1') {
+						if ((element.find('td:focus').data('type-options') && element.find('td:focus').data('type-options') === '0,1') || element.find('td:focus').data('type') === 'boolean') {
 
 							var isChecked = element.find('td:focus').find('input[type="checkbox"]').prop('checked');
 							element.find('td:focus').find('input[type="checkbox"]').prop('checked', !isChecked);
