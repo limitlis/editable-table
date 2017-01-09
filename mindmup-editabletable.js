@@ -172,7 +172,8 @@ $.fn.editableTableWidget = function (options) {
 			}
 		});
 
-		element.find('td').prop('tabindex', 1);
+		element.find('td:not(.space-holder)').prop('tabindex', 1);
+
 		$(window).on('resize', function () {
 			if (editor && editor.is(':visible')) {
 				editor.offset(active.offset())
