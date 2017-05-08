@@ -189,7 +189,7 @@ $.fn.editableTableWidget.defaultOptions = {
 					'text-align', 'font', 'font-size', 'font-family', 'font-weight',
 					'border', 'border-top', 'border-bottom', 'border-left', 'border-right'],
 	skipClass: '.noedit',
-	editorText: $('<input>'),
+	editorText: $('<input id="editableTableActiveInput">'),
 	editorSelect: $('<select>')
 };
 
