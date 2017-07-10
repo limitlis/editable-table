@@ -106,6 +106,7 @@ $.fn.editableTableWidget = function (options) {
 						}
 					}
 				} else {
+                    // handle special cases that have the skipClass
 					if (element.find('td:focus').hasClass('select2')) {
 						$('.return-focus').removeClass('return-focus');
 						var tempEl = element.find('td:focus');
@@ -113,6 +114,10 @@ $.fn.editableTableWidget = function (options) {
 						tempEl.addClass('return-focus');
 						$(':focus').blur();
 						tempEl.click();
+					} else if (element.find('td:focus').hasClass('col-associated')) {
+						console.log('do associate stuff');
+						// let editable table directive take over
+						element.find('td:focus').trigger('change');
 					}
 				}
 			},
@@ -192,4 +197,3 @@ $.fn.editableTableWidget.defaultOptions = {
 	editorText: $('<input id="editableTableActiveInput">'),
 	editorSelect: $('<select>')
 };
-
