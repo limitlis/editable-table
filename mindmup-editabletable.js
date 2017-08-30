@@ -129,6 +129,8 @@ $.fn.editableTableWidget = function (options) {
 					return true;
 				}
 				originalContent = active.html();
+				// store previous value so that it's accessible if needed
+				active.data('previousValue', originalContent);
 				active.text(text).trigger(evt, text);
 				if (evt.result === 'willSave') {
 					if (active.find('.inner-value').length) {
