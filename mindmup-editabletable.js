@@ -20,7 +20,16 @@ $.fn.editableTableWidget = function (options) {
 						editor.hide();
 						active.focus();
 					} else if (e.which === TAB) {
-						active.focus();
+						// this closes out a focused select input on TAB as if it were an ESC key press
+						if (document.activeElement.nodeName === 'SELECT') {
+							editor.val(active.text());
+							e.preventDefault();
+							e.stopPropagation();
+							editor.hide();
+							active.focus();
+						} else {
+							active.focus();
+						}
 					} else if (this.selectionEnd - this.selectionStart === this.value.length) {
 						var possibleMove = movement(active, e.which);
 						if (possibleMove.length > 0) {
@@ -114,6 +123,10 @@ $.fn.editableTableWidget = function (options) {
 						tempEl.addClass('return-focus');
 						$(':focus').blur();
 						tempEl.click();
+						// focus on the select2 element and pop open the drop drown menu
+						setTimeout(function() {
+							$(tempEl).find('.select2-selection__rendered').click();
+						}, 0);
 					} else if (element.find('td:focus').hasClass('col-associated')) {
 						console.log('do associate stuff');
 						// let editable table directive take over
