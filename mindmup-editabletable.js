@@ -11,6 +11,7 @@ $.fn.editableTableWidget = function (options) {
 						setActiveText();
 						editor.hide();
 						active.focus();
+						$('.panel-body').removeClass(activeOptions.scrollPreventor);
 						e.preventDefault();
 						e.stopPropagation();
 					} else if (e.which === ESC) {
@@ -18,23 +19,20 @@ $.fn.editableTableWidget = function (options) {
 						e.preventDefault();
 						e.stopPropagation();
 						editor.hide();
+						$('.panel-body').removeClass(activeOptions.scrollPreventor);
 						active.focus();
 					} else if (e.which === TAB) {
-						// this closes out a focused select input on TAB as if it were an ESC key press
-						if (document.activeElement.nodeName === 'SELECT') {
-							editor.val(active.text());
-							e.preventDefault();
-							e.stopPropagation();
-							editor.hide();
-							active.focus();
-						} else {
-							active.focus();
-						}
+						active.focus();
+						editor.hide();
+						$('.panel-body').removeClass(activeOptions.scrollPreventor);
+						e.preventDefault();
+						e.stopPropagation();
 					} else if (this.selectionEnd - this.selectionStart === this.value.length) {
 						var possibleMove = movement(active, e.which);
 						if (possibleMove.length > 0) {
 							possibleMove.focus();
 							e.preventDefault();
+							$('.panel-body').removeClass(activeOptions.scrollPreventor);
 							e.stopPropagation();
 						}
 					}
@@ -70,8 +68,14 @@ $.fn.editableTableWidget = function (options) {
 				}
 
 				active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
+
+
 				if (active.length) {
 					if (!active.data('type-options') && active.data('type') !== 'boolean') {
+						// console.warn('HAX');
+						// Remove the scrollPreventor class
+						element.find('td:focus').parents('.panel-body').addClass(activeOptions.scrollPreventor);
+
 						editor = editorText.val(active.text().trim() || active.find('.inner-value').text())
 							.removeClass('error')
 							.show()
@@ -115,6 +119,9 @@ $.fn.editableTableWidget = function (options) {
 						}
 					}
 				} else {
+					// console.warn('HAX');
+					element.find('td:focus').parents('.panel-body').addClass(activeOptions.scrollPreventor);
+
                     // handle special cases that have the skipClass
 					if (element.find('td:focus').hasClass('select2')) {
 						$('.return-focus').removeClass('return-focus');
@@ -123,10 +130,6 @@ $.fn.editableTableWidget = function (options) {
 						tempEl.addClass('return-focus');
 						$(':focus').blur();
 						tempEl.click();
-						// focus on the select2 element and pop open the drop drown menu
-						setTimeout(function() {
-							$(tempEl).find('.select2-selection__rendered').click();
-						}, 0);
 					} else if (element.find('td:focus').hasClass('col-associated')) {
 						console.log('do associate stuff');
 						// let editable table directive take over
@@ -209,6 +212,7 @@ $.fn.editableTableWidget.defaultOptions = {
 					'text-align', 'font', 'font-size', 'font-family', 'font-weight',
 					'border', 'border-top', 'border-bottom', 'border-left', 'border-right'],
 	skipClass: '.noedit',
+	scrollPreventor: 'hold-position',
 	editorText: $('<input id="editableTableActiveInput">'),
 	editorSelect: $('<select>')
 };
