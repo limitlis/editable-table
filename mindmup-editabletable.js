@@ -22,9 +22,11 @@ $.fn.editableTableWidget = function (options) {
 						$('.panel-body').removeClass(activeOptions.scrollPreventor);
 						active.focus();
 					} else if (e.which === TAB) {
+						editor.hide();
+						active.focus();
 						var whichWay;
 						if (e.shiftKey) {
-							whichway = ARROW_LEFT;
+							whichWay = ARROW_LEFT;
 						} else {
 							whichWay = ARROW_RIGHT;
 						}
@@ -33,10 +35,7 @@ $.fn.editableTableWidget = function (options) {
 							possibleTabMove.focus();
 							e.preventDefault();
 							e.stopPropagation();
-						} else {
-							active.focus();
 						}
-						editor.hide();
 						$('.panel-body').removeClass(activeOptions.scrollPreventor);
 						e.preventDefault();
 						e.stopPropagation();
