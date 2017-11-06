@@ -22,7 +22,20 @@ $.fn.editableTableWidget = function (options) {
 						$('.panel-body').removeClass(activeOptions.scrollPreventor);
 						active.focus();
 					} else if (e.which === TAB) {
-						active.focus();
+						var whichWay;
+						if (e.shiftKey) {
+							whichway = ARROW_LEFT;
+						} else {
+							whichWay = ARROW_RIGHT;
+						}
+						var possibleTabMove = movement(active, whichWay);
+						if (possibleTabMove.length > 0) {
+							possibleTabMove.focus();
+							e.preventDefault();
+							e.stopPropagation();
+						} else {
+							active.focus();
+						}
 						editor.hide();
 						$('.panel-body').removeClass(activeOptions.scrollPreventor);
 						e.preventDefault();
@@ -122,7 +135,7 @@ $.fn.editableTableWidget = function (options) {
 					// console.warn('HAX');
 					element.find('td:focus').parents('.panel-body').addClass(activeOptions.scrollPreventor);
 
-                    // handle special cases that have the skipClass
+					// handle special cases that have the skipClass
 					if (element.find('td:focus').hasClass('select2')) {
 						$('.return-focus').removeClass('return-focus');
 						var tempEl = element.find('td:focus');
