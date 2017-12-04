@@ -103,16 +103,16 @@ $.fn.editableTableWidget = function (options) {
 						editorSelect.children('option').remove();
 
 						// Create options based on data-select-options
-						var tempOptions = active.data('type-options').split(','),
-							selected = false;
+						var tempOptions = active.data('type-options').split(',');
 						if (tempOptions.length) {
 							for(var i = 0; i < tempOptions.length; i++) {
-								if (active.text() === tempOptions[i]) {
+								var selected = false;
+								if (active.text().trim() === tempOptions[i]) {
 									selected = true;
 								}
 								editorSelect.append($('<option value="' + tempOptions[i] + '" ' + (selected ? 'selected' : '') +'>' + tempOptions[i] + '</option>'));
 							}
-							editor = editorSelect.val(active.find('.inner-value').text() || active.text())
+							editor = editorSelect.val(active.find('.inner-value').text().trim() || active.text().trim())
 								.removeClass('error')
 								.show()
 								.offset(active.offset())
