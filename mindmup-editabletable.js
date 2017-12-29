@@ -74,8 +74,8 @@ $.fn.editableTableWidget = function (options) {
 			editorSelect = activeOptions.editorSelect.css('position', 'absolute').hide().appendTo(element.parent()),
 			active,
 			showEditor = function (e) {
-				// checked for a 'locked-row' class on the TR to block this row for editing
-				if(e && $(e.target).closest('.locked-row').length) {
+				// checked for a 'locked-row' class on the TR to block this row for editing, and an actionable pass class
+				if(e && $(e.target).closest('.locked-row').length && !$(e.target).hasClass('actionable-when-locked')) {
 					return;
 				}
 
