@@ -78,9 +78,14 @@ $.fn.editableTableWidget = function (options) {
 				if(e && $(e.target).closest('.locked-row').length && !$(e.target).hasClass('actionable-when-locked')) {
 					return;
 				}
-
-				active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
-
+				var allowEditing = true;
+				// check for disallowing editing
+				if (element && $(element).data() && $(element).data().hasOwnProperty('allowEditing') && $(element).data().allowEditing === false) {
+					allowEditing = false;
+					active = [];
+				} else {
+					active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
+				}
 
 				if (active.length) {
 					if (!active.data('type-options') && active.data('type') !== 'boolean') {
@@ -88,7 +93,7 @@ $.fn.editableTableWidget = function (options) {
 						// Remove the scrollPreventor class
 						element.find('td:focus').parents('.panel-body').addClass(activeOptions.scrollPreventor);
 
-						editor = editorText.val(active.text().trim() || active.find('.inner-value').text())
+						editor = editorText.val(active.text().trim() || active.find('.inner-value').text().trim())
 							.removeClass('error')
 							.show()
 							.offset(active.offset())
@@ -131,21 +136,23 @@ $.fn.editableTableWidget = function (options) {
 						}
 					}
 				} else {
-					// console.warn('HAX');
-					element.find('td:focus').parents('.panel-body').addClass(activeOptions.scrollPreventor);
+					if (allowEditing) {
+						// console.warn('HAX');
+						element.find('td:focus').parents('.panel-body').addClass(activeOptions.scrollPreventor);
 
-					// handle special cases that have the skipClass
-					if (element.find('td:focus').hasClass('select2')) {
-						$('.return-focus').removeClass('return-focus');
-						var tempEl = element.find('td:focus');
-						// Add class so that we can find element later
-						tempEl.addClass('return-focus');
-						$(':focus').blur();
-						tempEl.click();
-					} else if (element.find('td:focus').hasClass('col-associated')) {
-						console.log('do associate stuff');
-						// let editable table directive take over
-						element.find('td:focus').trigger('change');
+						// handle special cases that have the skipClass
+						if (element.find('td:focus').hasClass('select2')) {
+							$('.return-focus').removeClass('return-focus');
+							var tempEl = element.find('td:focus');
+							// Add class so that we can find element later
+							tempEl.addClass('return-focus');
+							$(':focus').blur();
+							tempEl.click();
+						} else if (element.find('td:focus').hasClass('col-associated')) {
+							console.log('do associate stuff');
+							// let editable table directive take over
+							element.find('td:focus').trigger('change');
+						}
 					}
 				}
 			},
