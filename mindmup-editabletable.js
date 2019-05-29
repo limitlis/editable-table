@@ -2,11 +2,10 @@
 $.fn.editableTableWidget = function (options) {
 	'use strict';
 	return $(this).each(function () {
-		function bindEvents () {
+		function bindEvents() {
 			editor.blur(function () {
 					setActiveText();
 					editor.hide();
-					active.removeClass('editing');
 				}).keydown(function (e) {
 					if (e.which === ENTER) {
 						setActiveText();
@@ -25,6 +24,7 @@ $.fn.editableTableWidget = function (options) {
 					} else if (e.which === TAB) {
 						editor.hide();
 						active.focus();
+						active.removeClass('editing');
 						var whichWay;
 						if (e.shiftKey) {
 							whichWay = ARROW_LEFT;
@@ -43,6 +43,7 @@ $.fn.editableTableWidget = function (options) {
 					} else if (this.selectionEnd - this.selectionStart === this.value.length) {
 						var possibleMove = movement(active, e.which);
 						if (possibleMove.length > 0) {
+							active.removeClass('editing');
 							possibleMove.focus();
 							e.preventDefault();
 							$('.panel-body').removeClass(activeOptions.scrollPreventor);
@@ -59,7 +60,7 @@ $.fn.editableTableWidget = function (options) {
 						editor.removeClass('error');
 					}
 				});
-			}
+		}
 
 		var buildDefaultOptions = function () {
 				var opts = $.extend({}, $.fn.editableTableWidget.defaultOptions);
@@ -68,7 +69,13 @@ $.fn.editableTableWidget = function (options) {
 				return opts;
 			},
 			activeOptions = $.extend(buildDefaultOptions(), options),
-			ARROW_LEFT = 37, ARROW_UP = 38, ARROW_RIGHT = 39, ARROW_DOWN = 40, ENTER = 13, ESC = 27, TAB = 9,
+			ARROW_LEFT = 37,
+			ARROW_UP = 38,
+			ARROW_RIGHT = 39,
+			ARROW_DOWN = 40,
+			ENTER = 13,
+			ESC = 27,
+			TAB = 9,
 			element = $(this),
 			editor,
 			editorText = activeOptions.editorText.css('position', 'absolute').hide().appendTo(element.parent()),
@@ -76,7 +83,7 @@ $.fn.editableTableWidget = function (options) {
 			active,
 			showEditor = function (e) {
 				// checked for a 'locked-row' class on the TR to block this row for editing, and an actionable pass class
-				if(e && $(e.target).closest('.locked-row').length && !$(e.target).hasClass('actionable-when-locked')) {
+				if (e && $(e.target).closest('.locked-row').length && !$(e.target).hasClass('actionable-when-locked')) {
 					return;
 				}
 				var allowEditing = true;
@@ -112,12 +119,12 @@ $.fn.editableTableWidget = function (options) {
 						// Create options based on data-select-options
 						var tempOptions = active.data('type-options').split(',');
 						if (tempOptions.length) {
-							for(var i = 0; i < tempOptions.length; i++) {
+							for (var i = 0; i < tempOptions.length; i++) {
 								var selected = false;
 								if (active.text().trim() === tempOptions[i]) {
 									selected = true;
 								}
-								editorSelect.append($('<option value="' + tempOptions[i] + '" ' + (selected ? 'selected' : '') +'>' + tempOptions[i] + '</option>'));
+								editorSelect.append($('<option value="' + tempOptions[i] + '" ' + (selected ? 'selected' : '') + '>' + tempOptions[i] + '</option>'));
 							}
 							editor = editorSelect.val(active.find('.inner-value').text().trim() || active.text().trim())
 								.removeClass('error')
@@ -135,6 +142,7 @@ $.fn.editableTableWidget = function (options) {
 							var isChecked = element.find('td:focus').find('input[type="checkbox"]').prop('checked');
 							element.find('td:focus').find('input[type="checkbox"]').prop('checked', !isChecked);
 							element.find('td:focus').trigger('change', '' + (+!isChecked));
+							active.removeClass('editing');
 						}
 					}
 				} else {
@@ -162,6 +170,7 @@ $.fn.editableTableWidget = function (options) {
 				var text = editor.val(),
 					evt = $.Event('change'),
 					originalContent;
+				active.removeClass('editing');
 				if (active.text().trim() === text || editor.hasClass('error')) {
 					return true;
 				}
@@ -190,39 +199,39 @@ $.fn.editableTableWidget = function (options) {
 				return [];
 			};
 		element.on('click keypress dblclick', showEditor)
-		.css('cursor', 'pointer')
-		.keydown(function (e) {
-			var prevent = true,
-				possibleMove = movement($(e.target), e.which);
-			if (possibleMove.length > 0) {
-				possibleMove.focus();
-			} else if (e.which === ENTER) {
-				if($(e.target).closest('.locked-row').length) {
-					return;
+			.css('cursor', 'pointer')
+			.keydown(function (e) {
+				var prevent = true,
+					possibleMove = movement($(e.target), e.which);
+				if (possibleMove.length > 0) {
+					possibleMove.focus();
+				} else if (e.which === ENTER) {
+					if ($(e.target).closest('.locked-row').length) {
+						return;
+					}
+					showEditor();
+				} else if (e.which === 17 || e.which === 91 || e.which === 93) {
+					if ($(e.target).closest('.locked-row').length) {
+						return;
+					}
+					showEditor();
+					prevent = false;
+				} else {
+					prevent = false;
 				}
-				showEditor();
-			} else if (e.which === 17 || e.which === 91 || e.which === 93) {
-				if($(e.target).closest('.locked-row').length) {
-					return;
+				if (prevent) {
+					e.stopPropagation();
+					e.preventDefault();
 				}
-				showEditor();
-				prevent = false;
-			} else {
-				prevent = false;
-			}
-			if (prevent) {
-				e.stopPropagation();
-				e.preventDefault();
-			}
-		});
+			});
 
 		element.find('td:not(.space-holder)').prop('tabindex', 1);
 
 		$(window).on('resize', function () {
 			if (editor && editor.is(':visible')) {
 				editor.offset(active.offset())
-				.width(active.width())
-				.height(active.height());
+					.width(active.width())
+					.height(active.height());
 			}
 		});
 	});
@@ -230,8 +239,9 @@ $.fn.editableTableWidget = function (options) {
 };
 $.fn.editableTableWidget.defaultOptions = {
 	cloneProperties: ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
-					'text-align', 'font', 'font-size', 'font-family', 'font-weight',
-					'border', 'border-top', 'border-bottom', 'border-left', 'border-right'],
+		'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+		'border', 'border-top', 'border-bottom', 'border-left', 'border-right'
+	],
 	skipClass: '.noedit',
 	scrollPreventor: 'hold-position',
 	editorText: $('<input id="editableTableActiveInput">'),
