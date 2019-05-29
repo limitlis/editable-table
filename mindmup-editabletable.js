@@ -6,6 +6,7 @@ $.fn.editableTableWidget = function (options) {
 			editor.blur(function () {
 					setActiveText();
 					editor.hide();
+					active.removeClass('editing');
 				}).keydown(function (e) {
 					if (e.which === ENTER) {
 						setActiveText();
@@ -88,6 +89,7 @@ $.fn.editableTableWidget = function (options) {
 				}
 
 				if (active.length) {
+					active.addClass('editing');
 					if (!active.data('type-options') && active.data('type') !== 'boolean') {
 						// console.warn('HAX');
 						// Remove the scrollPreventor class
