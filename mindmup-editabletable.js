@@ -158,7 +158,7 @@ $.fn.editableTableWidget = function (options) {
 							tempEl.addClass('return-focus');
 							$(':focus').blur();
 							tempEl.click();
-						} else if (element.find('td:focus').hasClass('col-associated')) {
+						} else if (element.find('td:focus').hasClass('col-associatedobservations') || element.find('td:focus').hasClass('col-associated')) {
 							console.log('do associate stuff');
 							// let editable table directive take over
 							element.find('td:focus').trigger('change');
