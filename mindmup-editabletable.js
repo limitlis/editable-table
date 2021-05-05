@@ -2,11 +2,12 @@
 $.fn.editableTableWidget = function (options) {
 	'use strict';
 	return $(this).each(function () {
-		function bindEvents() {
+		function bindEvents(options) {
 			editor.blur(function () {
 					setActiveText();
 					editor.hide();
 				}).keydown(function (e) {
+					var arrowKeys = (e.which === ARROW_LEFT || e.which === ARROW_RIGHT || e.which === ARROW_UP ||  e.which === ARROW_DOWN)
 					if (e.which === ENTER) {
 						setActiveText();
 						editor.hide();
@@ -40,14 +41,32 @@ $.fn.editableTableWidget = function (options) {
 						$('.panel-body').removeClass(activeOptions.scrollPreventor);
 						e.preventDefault();
 						e.stopPropagation();
-					} else if (this.selectionEnd - this.selectionStart === this.value.length) {
-						var possibleMove = movement(active, e.which);
-						if (possibleMove.length > 0) {
-							active.removeClass('editing');
-							possibleMove.focus();
-							e.preventDefault();
-							$('.panel-body').removeClass(activeOptions.scrollPreventor);
-							e.stopPropagation();
+					} else if (arrowKeys) {
+						if (this.selectionEnd - this.selectionStart === this.value.length) {
+							var possibleMove = movement(active, e.which);
+							if (possibleMove.length > 0) {
+								active.removeClass('editing');
+								possibleMove.focus();
+								e.preventDefault();
+								$('.panel-body').removeClass(activeOptions.scrollPreventor);
+								e.stopPropagation();
+							}
+						}
+					} else {
+						// if we are doing 'keystroke prevention' rules for decimals (rather than validation on blur)
+						if (options && options.type === 'number' && options.preventKeystrokes && options.hasOwnProperty('decimalPlaces')) {
+							let currentValue = $(e.currentTarget).val();
+							if (!isNaN(parseFloat(currentValue))) {
+								// if it has a decimal
+								if (currentValue.indexOf('.') !== -1) {
+									let remainder = currentValue.split('.')[1]; 
+									// if they went beyond the step, remove the last digit
+									if (remainder.length >= options.decimalPlaces) {
+										$(e.currentTarget).val(currentValue.substring(0, currentValue.length - 1));
+									}
+								}
+							}
+							currentValue = undefined;
 						}
 					}
 				})
@@ -101,7 +120,18 @@ $.fn.editableTableWidget = function (options) {
 						// console.warn('HAX');
 						// Remove the scrollPreventor class
 						element.find('td:focus').parents('.panel-body').addClass(activeOptions.scrollPreventor);
-
+						// pass along any rules about limitations while pressing keys
+						var options = {
+							type: active.data('type')
+						};
+						if (element.find('td:focus').attr('data-decimal-limit')) {
+							options.decimalPlaces = element.find('td:focus').attr('data-decimal-limit');
+							options.decimalPlaces = !isNaN(options.decimalPlaces) ? parseFloat(options.decimalPlaces) : null;
+						}
+						if (element.find('td:focus').attr('data-prevent-keystrokes')) {
+							options.preventKeystrokes = element.find('td:focus').attr('data-prevent-keystrokes');
+						}
+						//console.log('options', options);
 						editor = editorText.val(active.text().trim() || active.find('.inner-value').text().trim())
 							.removeClass('error')
 							.show()
@@ -110,7 +140,7 @@ $.fn.editableTableWidget = function (options) {
 							.width(active.width())
 							.height(active.height())
 							.focus();
-						bindEvents();
+						bindEvents(options);
 
 					} else if (active.data('type-options') && active.data('type-options') !== '0,1') {
 						// Do as a checkbox if enumoptions are 0/1
