@@ -54,14 +54,35 @@ $.fn.editableTableWidget = function (options) {
 						}
 					} else {
 						// if we are doing 'keystroke prevention' rules for decimals (rather than validation on blur)
-						if (options && options.type === 'number' && options.preventKeystrokes && options.hasOwnProperty('decimalPlaces')) {
-							let currentValue = $(e.currentTarget).val();
-							if (!isNaN(parseFloat(currentValue))) {
+						if (options && options.type === 'number' && options.preventKeystrokes)
+							switch(e.key) {
+								case '0':
+								case '1':
+								case '2':
+								case '3':
+								case '4':
+								case '5':
+								case '6':
+								case '7':
+								case '8':
+								case '9':
+								case '0':
+								case '.':
+								case '-':
+								case 'Backspace':
+									// continue to allow the keystroke
+									break;
+								default:
+									e.preventDefault();
+									e.stopPropagation();
+							}
+							var currentValue = $(e.currentTarget).val();
+							if (options.hasOwnProperty('decimalPlaces')) {
 								// if it has a decimal
 								if (currentValue.indexOf('.') !== -1) {
-									let remainder = currentValue.split('.')[1]; 
-									// if they went beyond the step, remove the last digit
-									if (remainder.length >= options.decimalPlaces) {
+									var remainder = currentValue.split('.')[1]; 
+									// if they went beyond the step, remove the last digit (unless they are deleting themselves)
+									if (remainder.length >= options.decimalPlaces && e.key !== 'Backspace') {
 										$(e.currentTarget).val(currentValue.substring(0, currentValue.length - 1));
 									}
 								}
