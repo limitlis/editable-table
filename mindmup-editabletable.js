@@ -89,7 +89,6 @@ $.fn.editableTableWidget = function (options) {
 							}
 							currentValue = undefined;
 						}
-					}
 				})
 				.on('input paste', function () {
 					var evt = $.Event('validate');
