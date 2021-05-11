@@ -146,12 +146,14 @@ $.fn.editableTableWidget = function (options) {
 						var options = {
 							type: active.data('type')
 						};
+
 						// remove placeholder values
-						if (active.children('.placeholder-value').length) {
-							active.children('.placeholder-value').remove();
+						var currentVal = active.text().trim() || active.find('.inner-value').text().trim();
+						var placeholder = active.attr('placeholder');
+						if (placeholder) {
+							currentVal = currentVal.replace(placeholder, '');
 						}
-						//console.log('options', options);
-						editor = editorText.val(active.text().trim() || active.find('.inner-value').text().trim())
+						editor = editorText.val(currentVal)
 							.removeClass('error')
 							.show()
 							.offset(active.offset())
@@ -159,6 +161,9 @@ $.fn.editableTableWidget = function (options) {
 							.width(active.width())
 							.height(active.height())
 							.focus();
+						if (activeOptions.highlightOnEdit) {
+							editor.select();
+						}
 						bindEvents(options);
 
 					} else if (active.data('type-options') && active.data('type-options') !== '0,1') {
@@ -176,10 +181,12 @@ $.fn.editableTableWidget = function (options) {
 								editorSelect.append($('<option value="' + tempOptions[i] + '" ' + (selected ? 'selected' : '') + '>' + tempOptions[i] + '</option>'));
 							}
 							// remove placeholder values
-							if (active.children('.placeholder-value').length) {
-								active.children('.placeholder-value').remove();
+							var currentVal = active.text().trim() || active.find('.inner-value').text().trim();
+							var placeholder = active.attr('placeholder');
+							if (placeholder) {
+								currentVal = currentVal.replace(placeholder, '');
 							}
-							editor = editorSelect.val(active.find('.inner-value').text().trim() || active.text().trim())
+							editor = editorSelect.val(currentVal)
 								.removeClass('error')
 								.show()
 								.offset(active.offset())
@@ -220,23 +227,44 @@ $.fn.editableTableWidget = function (options) {
 				}
 			},
 			setActiveText = function () {
-				var text = editor.val(),
+				var text = editor.val().trim(),
 					evt = $.Event('change'),
-					originalContent;
+					originalContent,
+					activeElementVal = active.text().trim(),
+					placeholder = active.attr('placeholder');
+				
+				if (placeholder) {
+					// remove placeholder value.
+					activeElementVal = activeElementVal.replace(placeholder, '');
+				}
+
 				active.removeClass('editing');
-				if (active.text().trim() === text || editor.hasClass('error')) {
+				originalContent = active.html();
+
+				// if no change, or there's an error... bail on save
+				if (activeElementVal === text || editor.hasClass('error')) {
 					return true;
 				}
-				originalContent = active.html();
-				// store previous value so that it's accessible if needed
-				active.data('previousValue', originalContent);
-				active.text(text).trigger(evt, text);
-				if (evt.result === 'willSave') {
-					if (active.find('.inner-value').length) {
-						active.find('.inner-value').html(text);
-					} else {
-						active.html(text);
+				// Go through only if editor has a value, or if editor has a value and it's not the same as the activeElementVal
+				// This could mean that a value was intentionally removed.
+				if (text || text !== activeElementVal) {
+					// store previous value so that it's accessible if needed
+					active.data('previousValue', originalContent);
+					active.text(text).trigger(evt, text);
+					if (evt.result === 'willSave') {
+						if (active.find('.inner-value').length) {
+							active.find('.inner-value').html(text);
+						} else {
+							active.html(text);
+						}
 					}
+					if (!text) {
+						// replace placeholder if editor has no value or they match
+						active.html(unescape(active.data('placeholder-tag')));
+					}
+				} else if (!text && !activeElementVal) {
+					// replace placeholder if editor has no value or they match
+					active.html(unescape(active.data('placeholder-tag')));
 				}
 			},
 			movement = function (element, keycode) {
@@ -296,6 +324,7 @@ $.fn.editableTableWidget.defaultOptions = {
 		'border', 'border-top', 'border-bottom', 'border-left', 'border-right'
 	],
 	skipClass: '.noedit',
+	highlightOnEdit: false,
 	scrollPreventor: 'hold-position',
 	editorText: $('<input class="editableTableActiveInput">'),
 	editorSelect: $('<select>')
