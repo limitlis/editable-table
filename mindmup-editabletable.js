@@ -151,6 +151,10 @@ $.fn.editableTableWidget = function (options) {
 						if (element.find('td:focus').attr('data-prevent-keystrokes')) {
 							options.preventKeystrokes = element.find('td:focus').attr('data-prevent-keystrokes');
 						}
+						// remove placeholder values
+						if (active.children('.placeholder-value').length) {
+							active.children('.placeholder-value').remove();
+						}
 						//console.log('options', options);
 						editor = editorText.val(active.text().trim() || active.find('.inner-value').text().trim())
 							.removeClass('error')
@@ -175,6 +179,10 @@ $.fn.editableTableWidget = function (options) {
 									selected = true;
 								}
 								editorSelect.append($('<option value="' + tempOptions[i] + '" ' + (selected ? 'selected' : '') + '>' + tempOptions[i] + '</option>'));
+							}
+							// remove placeholder values
+							if (active.children('.placeholder-value').length) {
+								active.children('.placeholder-value').remove();
 							}
 							editor = editorSelect.val(active.find('.inner-value').text().trim() || active.text().trim())
 								.removeClass('error')
