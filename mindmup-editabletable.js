@@ -2,7 +2,7 @@
 $.fn.editableTableWidget = function (options) {
 	'use strict';
 	return $(this).each(function () {
-		function bindEvents(options) {
+		function bindEvents(boundOptions) {
 			editor.blur(function () {
 					setActiveText();
 					editor.hide();
@@ -54,7 +54,7 @@ $.fn.editableTableWidget = function (options) {
 						}
 					} else {
 						// if we are doing 'keystroke prevention' rules for decimals (rather than validation on blur)
-						if (options && options.type === 'number' && options.preventKeystrokes)
+						if (active && active.attr('data-type') === 'number' && active.attr('data-prevent-keystrokes')) {
 							switch(e.key) {
 								case '0':
 								case '1':
@@ -77,18 +77,20 @@ $.fn.editableTableWidget = function (options) {
 									e.stopPropagation();
 							}
 							var currentValue = $(e.currentTarget).val();
-							if (options.hasOwnProperty('decimalPlaces')) {
+							var prescision = active.attr('data-decimal-limit') ? parseInt(active.attr('data-decimal-limit')) : 0;
+							if (prescision) {
 								// if it has a decimal
 								if (currentValue.indexOf('.') !== -1) {
 									var remainder = currentValue.split('.')[1]; 
 									// if they went beyond the step, remove the last digit (unless they are deleting themselves)
-									if (remainder.length >= options.decimalPlaces && e.key !== 'Backspace') {
+									if (remainder.length >= prescision && e.key !== 'Backspace') {
 										$(e.currentTarget).val(currentValue.substring(0, currentValue.length - 1));
 									}
 								}
 							}
 							currentValue = undefined;
 						}
+					}
 				})
 				.on('input paste', function () {
 					var evt = $.Event('validate');
@@ -144,13 +146,6 @@ $.fn.editableTableWidget = function (options) {
 						var options = {
 							type: active.data('type')
 						};
-						if (element.find('td:focus').attr('data-decimal-limit')) {
-							options.decimalPlaces = element.find('td:focus').attr('data-decimal-limit');
-							options.decimalPlaces = !isNaN(options.decimalPlaces) ? parseFloat(options.decimalPlaces) : null;
-						}
-						if (element.find('td:focus').attr('data-prevent-keystrokes')) {
-							options.preventKeystrokes = element.find('td:focus').attr('data-prevent-keystrokes');
-						}
 						// remove placeholder values
 						if (active.children('.placeholder-value').length) {
 							active.children('.placeholder-value').remove();
@@ -302,6 +297,6 @@ $.fn.editableTableWidget.defaultOptions = {
 	],
 	skipClass: '.noedit',
 	scrollPreventor: 'hold-position',
-	editorText: $('<input id="editableTableActiveInput">'),
+	editorText: $('<input class="editableTableActiveInput">'),
 	editorSelect: $('<select>')
 };
