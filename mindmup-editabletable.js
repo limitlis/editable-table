@@ -133,7 +133,7 @@ $.fn.editableTableWidget = function (options) {
 					allowEditing = false;
 					active = [];
 				} else {
-					active = element.find('td:focus:not(' + activeOptions.skipClass + ')');
+					active = element.find('td:focus:not(' + activeOptions.skipClass + '):not(.select2)');
 				}
 
 				if (active.length) {
