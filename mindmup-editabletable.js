@@ -192,7 +192,8 @@ $.fn.editableTableWidget = function (options) {
 								.offset(active.offset())
 								.css(active.css(activeOptions.cloneProperties))
 								.width(active.outerWidth())
-								.height(active.outerHeight())
+								// causing weirdness
+								// .height(active.outerHeight())
 								.focus();
 							bindEvents();
 						}
@@ -320,7 +321,7 @@ $.fn.editableTableWidget = function (options) {
 };
 $.fn.editableTableWidget.defaultOptions = {
 	cloneProperties: ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
-		'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+		'text-align', 'font', 'font-size', 'font-family', 'font-weight', 'height',
 		'border', 'border-top', 'border-bottom', 'border-left', 'border-right'
 	],
 	skipClass: '.noedit',
