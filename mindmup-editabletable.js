@@ -282,7 +282,11 @@ $.fn.editableTableWidget = function (options) {
 				}
 				return [];
 			};
-		element.on('click keypress dblclick', showEditor)
+		element.on('keypress dblclick', showEditor)
+			.click(function(e){
+				e.stopPropagation();
+				showEditor();
+			})
 			.css('cursor', 'pointer')
 			.keydown(function (e) {
 				var prevent = true,
