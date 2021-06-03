@@ -6,6 +6,8 @@ $.fn.editableTableWidget = function (options) {
 			editor.blur(function () {
 					setActiveText();
 					editor.hide();
+				}).click(function(e){
+					e.stopPropagation();
 				}).keydown(function (e) {
 					var arrowKeys = (e.which === ARROW_LEFT || e.which === ARROW_RIGHT || e.which === ARROW_UP ||  e.which === ARROW_DOWN)
 					if (e.which === ENTER) {
@@ -280,7 +282,11 @@ $.fn.editableTableWidget = function (options) {
 				}
 				return [];
 			};
-		element.on('click keypress dblclick', showEditor)
+		element.on('keypress dblclick', showEditor)
+			.click(function(e){
+				e.stopPropagation();
+				showEditor();
+			})
 			.css('cursor', 'pointer')
 			.keydown(function (e) {
 				var prevent = true,
