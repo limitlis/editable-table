@@ -261,11 +261,11 @@ $.fn.editableTableWidget = function (options) {
 					}
 					if (!text) {
 						// replace placeholder if editor has no value or they match
-						active.html(unescape(active.data('placeholder-tag')) || '');
+						active.html(unescape(active.data('placeholder-tag') || ''));
 					}
 				} else if (!text && !activeElementVal) {
 					// replace placeholder if editor has no value or they match
-					active.html(unescape(active.data('placeholder-tag')) || '');
+					active.html(unescape(active.data('placeholder-tag') || ''));
 				}
 			},
 			movement = function (element, keycode) {
