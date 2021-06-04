@@ -134,6 +134,8 @@ $.fn.editableTableWidget = function (options) {
 				if (element && $(element).data() && $(element).data().hasOwnProperty('allowEditing') && $(element).data().allowEditing === false) {
 					allowEditing = false;
 					active = [];
+				} else if (e && e.target && e.target.closest('td')) {
+					active = $(e.target).parents('td:not(' + activeOptions.skipClass + '):not(.select2)');
 				} else {
 					active = element.find('td:focus:not(' + activeOptions.skipClass + '):not(.select2)');
 				}
@@ -285,7 +287,7 @@ $.fn.editableTableWidget = function (options) {
 		element.on('keypress dblclick', showEditor)
 			.click(function(e){
 				e.stopPropagation();
-				showEditor();
+				showEditor(e);
 			})
 			.css('cursor', 'pointer')
 			.keydown(function (e) {
