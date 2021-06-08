@@ -56,7 +56,7 @@ $.fn.editableTableWidget = function (options) {
 						}
 					} else {
 						// if we are doing 'keystroke prevention' rules for decimals (rather than validation on blur)
-						if (active && active.attr('data-type') === 'number' && active.attr('data-prevent-keystrokes')) {
+						if (active && active.attr('data-type') && active.attr('data-type').toLowerCase() === 'number') {
 							switch(e.key) {
 								case '0':
 								case '1':
@@ -78,9 +78,10 @@ $.fn.editableTableWidget = function (options) {
 									e.preventDefault();
 									e.stopPropagation();
 							}
-							var currentValue = $(e.currentTarget).val();
+							// prevent decimal place keystrokes
 							var prescision = active.attr('data-decimal-limit') ? parseInt(active.attr('data-decimal-limit')) : 0;
 							if (prescision) {
+								var currentValue = $(e.currentTarget).val();
 								// if it has a decimal
 								if (currentValue.indexOf('.') !== -1) {
 									var remainder = currentValue.split('.')[1]; 
@@ -89,8 +90,8 @@ $.fn.editableTableWidget = function (options) {
 										$(e.currentTarget).val(currentValue.substring(0, currentValue.length - 1));
 									}
 								}
+								currentValue = undefined;
 							}
-							currentValue = undefined;
 						}
 					}
 				})
